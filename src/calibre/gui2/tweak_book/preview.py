@@ -8,7 +8,6 @@
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-import json
 import textwrap
 import time
 from collections import defaultdict
@@ -291,10 +290,11 @@ class Bridge(QObject):
     def __init__(self, parent=None):
         QObject.__init__(self, parent)
 
-    @pyqtSlot(str, str, str)
+    @pyqtSlot('QString', 'QString', 'QJsonArray')
     def request_sync(self, tag_name, href, sourceline_address):
+        address = [sourceline_address[0].toInt(), [x.toString() for x in sourceline_address[1].toArray()]]
         try:
-            self.sync_requested.emit(unicode_type(tag_name), unicode_type(href), json.loads(unicode_type(sourceline_address)))
+            self.sync_requested.emit(tag_name, href, address)
         except (TypeError, ValueError, OverflowError, AttributeError):
             pass
 

@@ -8,8 +8,9 @@ import sys
 import time
 
 from PyQt5.Qt import QIcon
+from PyQt5.QtWebEngineCore import QWebEngineUrlScheme
 
-from calibre.constants import EDITOR_APP_UID, islinux, iswindows
+from calibre.constants import EDITOR_APP_UID, FAKE_PROTOCOL, islinux, iswindows
 from calibre.gui2 import (
     Application, decouple, set_app_uid, set_gui_prefs, setup_gui_option_parser
 )
@@ -52,6 +53,10 @@ def _run(args, notify=None):
     # Ensure we can continue to function if GUI is closed
     os.environ.pop('CALIBRE_WORKER_TEMP_DIR', None)
     reset_base_dir()
+    scheme = QWebEngineUrlScheme(FAKE_PROTOCOL.encode('ascii'))
+    scheme.setSyntax(QWebEngineUrlScheme.Syntax.Host)
+    scheme.setFlags(QWebEngineUrlScheme.SecureScheme)
+    QWebEngineUrlScheme.registerScheme(scheme)
 
     if iswindows:
         # Ensure that all ebook editor instances are grouped together in the task
